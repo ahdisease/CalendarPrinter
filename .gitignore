@@ -2,7 +2,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,linux,macos,java,java-web,intellij,intellij+all,intellij+iml,eclipse,maven
 
 # Manual Testing Class
-**/ScratchPad.*
+**/ScratchPad*
 
 ### Eclipse ###
 .metadata
