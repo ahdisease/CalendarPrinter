@@ -3,10 +3,8 @@ package com.ahdisease.calendarprinter.model;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Locale;
 
 public class CalendarEventTests {
 
