@@ -27,6 +27,7 @@ public class CalendarEvent {
     //constants
     private final String PATTERN_FORMAT = "yyyyMMdd'T'HHmmssz";
 
+
     //instance variables
     private String summary;
     private UUID uuid;
@@ -43,6 +44,8 @@ public class CalendarEvent {
                 .withZone(ZoneId.of("Z"));
         return formatter.format(date);
     }
+
+    // overrides
     @Override
     public String toString() {
         StringBuilder eventText= new StringBuilder("BEGIN:VEVENT");
@@ -52,5 +55,19 @@ public class CalendarEvent {
 
         eventText.append("\nEND:VEVENT");
         return eventText.toString();
+    }
+
+    //getters
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public ZonedDateTime getStartDate() {
+        return startDate;
     }
 }
