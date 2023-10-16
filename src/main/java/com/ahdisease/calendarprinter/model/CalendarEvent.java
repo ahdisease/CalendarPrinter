@@ -1,5 +1,6 @@
 package com.ahdisease.calendarprinter.model;
 
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -32,11 +33,13 @@ public class CalendarEvent {
     private String summary;
     private UUID uuid;
     private ZonedDateTime startDate;
+    private ZonedDateTime createdDate;
 
     public CalendarEvent(String summary, ZonedDateTime startDate) {
         uuid = UUID.randomUUID();
         this.summary = summary;
         this.startDate = startDate;
+        this.createdDate = ZonedDateTime.now();
     }
 
     private String DateToUTCString(ZonedDateTime date) {
@@ -51,7 +54,8 @@ public class CalendarEvent {
         StringBuilder eventText= new StringBuilder("BEGIN:VEVENT");
         eventText.append("\nSUMMARY:" + summary );
         eventText.append("\nUID:" + uuid);
-        eventText.append("\nDATEST:" + DateToUTCString(startDate));
+        eventText.append("\nDTSTART:" + DateToUTCString(startDate));
+        eventText.append("\nDTSTAMP:" + DateToUTCString(createdDate));
 
         eventText.append("\nEND:VEVENT");
         return eventText.toString();
