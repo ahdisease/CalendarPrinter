@@ -132,6 +132,10 @@ public class CalendarFileWriterTests {
         }
     }
 
+    //TODO confirm new file has .ics extention
+
+    //TODO confirm file contents match expected string
+
     @AfterEach
     public void delete_test_file_ics() {
         File testFile = new File("ics_calendar_files\\test_file.ics");
