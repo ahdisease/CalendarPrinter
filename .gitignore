@@ -4,6 +4,15 @@
 # Manual Testing Class
 **/ScratchPad*
 
+# Calendar files
+*.ics
+**/*.ics
+
+# Directories to write files while testing
+./ics_calendar_files/
+./test_ics_calendar_files/
+
+
 ### Eclipse ###
 .metadata
 bin/
