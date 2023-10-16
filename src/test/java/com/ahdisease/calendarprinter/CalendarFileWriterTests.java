@@ -4,6 +4,7 @@ import com.ahdisease.calendarprinter.model.CalendarEvent;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
@@ -17,7 +18,7 @@ public class CalendarFileWriterTests {
         //reset
         try {
             writer = new CalendarFileWriter("test_file.ics");
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             Assertions.fail();
         }
 
@@ -71,7 +72,34 @@ public class CalendarFileWriterTests {
         }
     }
 
-    //TODO implement toString testing
+    @Test
+    public void toString_prints_expected_value_when_no_events_added() {
+        //ARRANGE
+        String expected = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//ZContent.net//Zap Calendar 1.0//EN\nCALSCALE:GREGORIAN\nMETHOD:PUBLISH\n\nEND:VCALENDAR";
+
+        //ACT & ASSERT
+        Assertions.assertEquals(expected,writer.toString());
+    }
+
+    @Test
+    public void toString_prints_expected_value_when_events_added() {
+        //ARRANGE
+        String expectedStart = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//ZContent.net//Zap Calendar 1.0//EN\nCALSCALE:GREGORIAN\nMETHOD:PUBLISH\n";
+        String expectedEnd= "\nEND:VCALENDAR";
+
+        writer.addCalendarEvent(eventOne);
+        String expectedOneEvent = expectedStart + eventOne.toString() + expectedEnd;
+        String actualOneEvent = writer.toString();
+
+        writer.addCalendarEvent(eventTwo);
+        String expectedTwoEvent = expectedStart + eventOne.toString()+ eventTwo.toString() + expectedEnd;
+        String actualTwoEvent = writer.toString();
+
+        //ACT & ASSERT
+        Assertions.assertEquals(expectedOneEvent,actualOneEvent);
+        Assertions.assertEquals(expectedTwoEvent,actualTwoEvent);
+
+    }
 
     @Test
     public void writeEventsToFile_throws_IllegalStateException_when_it_does_not_contain_events() {
@@ -83,6 +111,8 @@ public class CalendarFileWriterTests {
             Assertions.fail("CalendarFileWriter should not write files when no CalendarEvents have been added");
         } catch (IllegalStateException error) {
             Assertions.assertEquals("No calendar events have been added to writer", error.getMessage());
+        } catch (Exception e) {
+            Assertions.fail();
         }
     }
 
