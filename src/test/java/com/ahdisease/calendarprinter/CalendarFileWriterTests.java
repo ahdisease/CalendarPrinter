@@ -1,11 +1,9 @@
 package com.ahdisease.calendarprinter;
 
 import com.ahdisease.calendarprinter.model.CalendarEvent;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
+import java.io.File;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
@@ -53,11 +51,10 @@ public class CalendarFileWriterTests {
         //ACT & ASSERT
         try {
             writer.addCalendarEvent(null);
+            Assertions.fail("Null should not be accepted");
         } catch (IllegalArgumentException error) {
             Assertions.assertEquals("Calendar event cannot be empty", error.getMessage());
-            return;
         }
-        Assertions.fail("Null should not be accepted");
     }
 
     @Test
@@ -68,11 +65,50 @@ public class CalendarFileWriterTests {
         try {
             writer.addCalendarEvent(eventOne);
             writer.addCalendarEvent(eventOne);
+            Assertions.fail("Calendar event should not be addable twice.");
         } catch (IllegalArgumentException error) {
             Assertions.assertEquals("Calendar event already added", error.getMessage());
-            return;
         }
-        Assertions.fail("Calendar event should not be addable twice.");
+    }
+
+    //TODO implement toString testing
+
+    @Test
+    public void writeEventsToFile_throws_IllegalStateException_when_it_does_not_contain_events() {
+        //ARRANGE
+
+        //ACT & ASSERT
+        try {
+            writer.writeEventsToFile();
+            Assertions.fail("CalendarFileWriter should not write files when no CalendarEvents have been added");
+        } catch (IllegalStateException error) {
+            Assertions.assertEquals("No calendar events have been added to writer", error.getMessage());
+        }
+    }
+
+    @Test
+    public void writeEventsToFile_changes_file() {
+        //ARRANGE
+        File testFile = new File("ics_calendar_files\\test_file.ics");
+        long lastModifiedTime = testFile.lastModified();
+        writer.addCalendarEvent(eventOne);
+        //ACT & ASSERT
+        try {
+            writer.writeEventsToFile();
+            long testLastModifiedTime = testFile.lastModified();
+            Assertions.assertNotEquals(lastModifiedTime,testLastModifiedTime,"File '.\\ics_calendar_files\\test_file.ics' should be modified when given valid input");
+        } catch (Exception error) {
+            Assertions.fail("CalendarFileWriter should write to file.");
+        }
+    }
+
+    @AfterEach
+    public void delete_test_file_ics() {
+        File testFile = new File("ics_calendar_files\\test_file.ics");
+        if (testFile.exists()) {
+            testFile.delete();
+
+        }
     }
 
 
