@@ -28,9 +28,29 @@ END:VEVENT
 END:VCALENDAR
 ```
 
-This example represents all accepted features of an .ics file using the ICalendar standard. 
+This example represents all accepted base properties of an .ics file using the ICalendar standard. 
 
 ## Current To Do:
-- [ ] Create Calendar Event model
+- [X] Create Calendar Event model
+- [ ] Add all properties to Calendar Event
+    - [X] SUMMARY - Title of the Event
+    - [X] UID - Unique identifier with UUID format
+    - [ ] SEQUENCE
+    - [ ] STATUS
+    - [ ] TRANSP
+    - [ ] RRULE
+    - [X] DTSTART - Timestamp indicating when an event begins
+    - [ ] DTEND
+    - [X] DTSTAMP - Timestamp indicating when an event was created
+    - [ ] CATEGORIES
+    - [ ] LOCATION
+    - [ ] GEO
+    - [ ] DESCRIPTION
+    - [ ] URL
+- [X] Create File Writing Class
+- [ ] Add customization of all properties to Calendar File writer
+    - [ ] VERSION
+    - [ ] PRODID
+    - [ ] CALSCALE
+    - [ ] METHOD
 - [ ] Create UI to Generate Calendar Events
-- [ ] Create File Writing Class
