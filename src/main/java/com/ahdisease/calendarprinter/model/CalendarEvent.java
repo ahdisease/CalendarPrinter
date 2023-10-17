@@ -51,7 +51,10 @@ public class CalendarEvent {
     // overrides
     @Override
     public String toString() {
+        //TODO should this be built from a template file?
+        // If so, this functionality should be moved to CalendarFileWriter
         StringBuilder eventText= new StringBuilder("BEGIN:VEVENT");
+
         eventText.append("\nSUMMARY:" + summary );
         eventText.append("\nUID:" + uuid);
         eventText.append("\nDTSTART:" + DateToUTCString(startDate));

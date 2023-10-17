@@ -5,6 +5,7 @@ import com.ahdisease.calendarprinter.model.CalendarEvent;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.InvalidPathException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class CalendarFileWriter {
         }
 
         //create file object with file and directory
-        workingFile = new File(directory,fileName);
+        workingFile = new File(directory, fileName);
 
         //try to generate FileWriter
         try {
@@ -35,22 +36,27 @@ public class CalendarFileWriter {
             throw new IllegalArgumentException("Invalid file name");
         }
     }
-//  TODO implement alternate constructor
 
-//    public CalendarFileWriter(String fileName, String writeDirectory) throws IllegalArgumentException {
-//        File directory = new File(writeDirectory);
-//        if (!directory.isDirectory() && !directory.isFile()) {
-//            directory.mkdir();
-//        }
-//
-//        File file = new File(directory + fileName);
-//
-//        try {
-//            writer = new FileWriter(file);
-//        } catch (IOException e) {
-//            throw new IllegalArgumentException("Invalid file name");
-//        }
-//    }
+
+    public CalendarFileWriter(String fileName, String writeDirectory) throws IllegalArgumentException {
+        File directory = new File(writeDirectory);
+        if (!directory.isDirectory() && !directory.isFile()) {
+            directory.mkdirs();
+        }
+
+        //create file object with file and directory
+        File file = new File(directory + fileName);
+        if (!file.canWrite()) {
+            throw new InvalidPathException(file.getPath(), "No write access");
+        }
+        workingFile = new File(directory, fileName);
+
+        try {
+            writer = new FileWriter(file);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Invalid file name");
+        }
+    }
 
     public void addCalendarEvent(CalendarEvent newEvent) throws IllegalArgumentException {
         if (newEvent == null) {
@@ -63,31 +69,27 @@ public class CalendarFileWriter {
         }
 
         events.stream()
-            .map(storedEvent->storedEvent.getUuid())
-            .forEach(uuid -> {
-                if (uuid.equals(newEvent.getUuid())) {
-                    throw new IllegalArgumentException("Calendar event already added");
-                }
-            });
+                .map(storedEvent -> storedEvent.getUuid())
+                .forEach(uuid -> {
+                    if (uuid.equals(newEvent.getUuid())) {
+                        throw new IllegalArgumentException("Calendar event already added");
+                    }
+                });
 
         events.add(newEvent);
     }
 
-    public File writeEventsToFile() {
+    public File writeEventsToFile() throws IOException {
         if (getNumberOfCalendarEvents() == 0) {
             throw new IllegalStateException("No calendar events have been added to writer");
         }
 
         String iCalendarString = toString();
 
-        try {
-            writer.write(iCalendarString);
-            writer.flush();
-            writer.close();
-        } catch (IOException e) {
-            //todo implement better exception handling
-            System.out.println(e.getMessage());
-        }
+        writer.write(iCalendarString);
+        writer.flush();
+        writer.close();
+
 
         return workingFile;
     }
@@ -99,17 +101,17 @@ public class CalendarFileWriter {
     public String toString() {
         //TODO research how to include other calendar apps and generate this section based on user selection
         StringBuilder iCalendarFormat = new StringBuilder();
-        iCalendarFormat.append( "BEGIN:VCALENDAR\n" );
-        iCalendarFormat.append( "VERSION:2.0\n" );
-        iCalendarFormat.append( "PRODID:-//ZContent.net//Zap Calendar 1.0//EN\n" );
-        iCalendarFormat.append( "CALSCALE:GREGORIAN\n" );
-        iCalendarFormat.append( "METHOD:PUBLISH\n" );
+        iCalendarFormat.append("BEGIN:VCALENDAR\n");
+        iCalendarFormat.append("VERSION:2.0\n");
+        iCalendarFormat.append("PRODID:-//ZContent.net//Zap Calendar 1.0//EN\n");
+        iCalendarFormat.append("CALSCALE:GREGORIAN\n");
+        iCalendarFormat.append("METHOD:PUBLISH\n");
 
         for (CalendarEvent event : events) {
             iCalendarFormat.append(event);
         }
 
-        iCalendarFormat.append( "\nEND:VCALENDAR");
+        iCalendarFormat.append("\nEND:VCALENDAR");
         return iCalendarFormat.toString();
     }
 
