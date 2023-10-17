@@ -30,11 +30,16 @@ public class CalendarEvent {
 
 
     //instance variables
+    // SUMMARY property acts as a title to the event
     private String summary;
+    // UID property is a unique identifier with the UUID format (128 bit value)
     private UUID uuid;
-    private ZonedDateTime startDate;
-    private ZonedDateTime createdDate;
+    // SEQUENCE property indicates the number of revisions to the event
     private int sequence = 0;
+    // DTSTART property indicates the UTC time at which the event begins
+    private ZonedDateTime startDate;
+    // DTSTAMP property indicates the UTC time at which the event was created
+    private ZonedDateTime createdDate;
 
     public CalendarEvent(String summary, ZonedDateTime startDate) {
         uuid = UUID.randomUUID();
