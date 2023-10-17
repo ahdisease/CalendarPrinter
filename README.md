@@ -36,7 +36,7 @@ This example represents all accepted base properties of an .ics file using the I
     - [X] SUMMARY - Title of the Event
     - [X] UID - Unique identifier with UUID format
     - [X] SEQUENCE
-    - [ ] STATUS
+    - [X] STATUS
     - [ ] TRANSP
     - [ ] RRULE
     - [X] DTSTART - Timestamp indicating when an event begins

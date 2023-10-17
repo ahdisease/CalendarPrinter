@@ -25,6 +25,8 @@ public class CalendarEvent {
     URL:http://americanhistorycalendar.com/peoplecalendar/1,328-abraham-lincol
  n
      */
+    //enums
+    private enum Status {TENTATIVE, CONFIRMED, CANCELLED};
     //constants
     private final String PATTERN_FORMAT = "yyyyMMdd'T'HHmmssz";
 
@@ -40,18 +42,42 @@ public class CalendarEvent {
     private ZonedDateTime startDate;
     // DTSTAMP property indicates the UTC time at which the event was created
     private ZonedDateTime createdDate;
+    // STATUS property indicates whether the event is TENTATIVE, CONFIRMED, or CANCELLED
+    private Status status;
+
 
     public CalendarEvent(String summary, ZonedDateTime startDate) {
         uuid = UUID.randomUUID();
         this.summary = summary;
         this.startDate = startDate;
         this.createdDate = ZonedDateTime.now();
+        this.status = Status.CONFIRMED;
+    }
+
+    public CalendarEvent(String summary, ZonedDateTime startDate, boolean tentativeEvent) {
+        uuid = UUID.randomUUID();
+        this.summary = summary;
+        this.startDate = startDate;
+        this.createdDate = ZonedDateTime.now();
+        if (tentativeEvent) {
+            this.status = Status.TENTATIVE;
+        } else {
+            this.status = Status.CONFIRMED;
+        }
     }
 
     private String DateToUTCString(ZonedDateTime date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(PATTERN_FORMAT)
                 .withZone(ZoneId.of("Z"));
         return formatter.format(date);
+    }
+
+    public void confirmEvent() {
+        status = Status.CONFIRMED;
+    }
+
+    public void cancelEvent() {
+        status = Status.CANCELLED;
     }
 
     // overrides
@@ -64,6 +90,7 @@ public class CalendarEvent {
         eventText.append("\nSUMMARY:" + summary );
         eventText.append("\nUID:" + uuid);
         eventText.append("\nSEQUENCE:" + sequence);
+        eventText.append("\nSTATUS:" + status.name());
         eventText.append("\nDTSTART:" + DateToUTCString(startDate));
         eventText.append("\nDTSTAMP:" + DateToUTCString(createdDate));
 

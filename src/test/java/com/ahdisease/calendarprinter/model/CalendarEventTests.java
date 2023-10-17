@@ -23,11 +23,16 @@ public class CalendarEventTests {
         // create calendar event
         ZonedDateTime dateTime = ZonedDateTime.of(2023 , 03, 21, 0, 0, 0,0, ZoneId.of("EST",ZoneId.SHORT_IDS));
         CalendarEvent firstDayOfSpring = new CalendarEvent("Spring Begins", dateTime);
+        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",dateTime,true);
 
         //ASSERT
         // validate uid
         Matcher uidMatcher = uidPattern.matcher(firstDayOfSpring.getUuid().toString());
         Assertions.assertTrue(uidMatcher.find(), "Expected contructor to generate valid UID");
+
+        uidMatcher = uidPattern.matcher(tentativeEvent.getUuid().toString());
+        Assertions.assertTrue(uidMatcher.find(), "Expected contructor to generate valid UID - tentative event");
+
     }
     @Test
     public void toString_returns_expected_value() {
@@ -38,6 +43,7 @@ public class CalendarEventTests {
                 "SUMMARY:Spring Begins",
                 "UID:",
                 "SEQUENCE:0",
+                "STATUS:CONFIRMED",
                 "DTSTART:20230321T050000Z",
                 "DTSTAMP",
                 "END:VEVENT"
@@ -72,6 +78,63 @@ public class CalendarEventTests {
 
             Assertions.assertEquals(expectedICalendarLines[i],iCalendarLines[i],"Expected line of String to match: " + i);
         }
+    }
+
+    @Test
+    public void confirmEvent_changes_status_to_confirmed() {
+        //ARRANGE
+        // create calendar event
+        ZonedDateTime dateTime = ZonedDateTime.of(2023 , 03, 21, 0, 0, 0,0, ZoneId.of("EST",ZoneId.SHORT_IDS));
+        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",dateTime,true);
+
+        String[] eventStringLines = tentativeEvent.toString().split("\n");
+        String statusLineAfterCreation = null;
+        int statusIndex = -1;
+        for (int i = 0; i < eventStringLines.length; i++) {
+            if (eventStringLines[i].startsWith("STATUS:")) {
+                statusLineAfterCreation = eventStringLines[i];
+                statusIndex=i;
+            }
+        }
+        if (statusLineAfterCreation == null) {
+            Assertions.fail("Unable to identify STATUS in CalendarEvent String");
+        }
+        //ACT
+        tentativeEvent.confirmEvent();
+        eventStringLines = tentativeEvent.toString().split("\n");
+        String statusLineAfterConfirmation = eventStringLines[statusIndex];
+
+        //ASSERT
+        Assertions.assertEquals("STATUS:TENTATIVE",statusLineAfterCreation, "Expected CalendarEvent to be generated as TENTATIVE");
+        Assertions.assertEquals("STATUS:CONFIRMED",statusLineAfterConfirmation, "Expected status to change after confirmation");
+    }
+    @Test
+    public void cancelEvent_changes_status_to_cancelled() {
+        //ARRANGE
+        // create calendar event
+        ZonedDateTime dateTime = ZonedDateTime.of(2023 , 03, 21, 0, 0, 0,0, ZoneId.of("EST",ZoneId.SHORT_IDS));
+        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",dateTime,true);
+
+        String[] eventStringLines = tentativeEvent.toString().split("\n");
+        String statusLineAfterCreation = null;
+        int statusIndex = -1;
+        for (int i = 0; i < eventStringLines.length; i++) {
+            if (eventStringLines[i].startsWith("STATUS:")) {
+                statusLineAfterCreation = eventStringLines[i];
+                statusIndex=i;
+            }
+        }
+        if (statusLineAfterCreation == null) {
+            Assertions.fail("Unable to identify STATUS in CalendarEvent String");
+        }
+        //ACT
+        tentativeEvent.cancelEvent();
+        eventStringLines = tentativeEvent.toString().split("\n");
+        String statusLineAfterCancellation = eventStringLines[statusIndex];
+
+        //ASSERT
+        Assertions.assertEquals("STATUS:TENTATIVE",statusLineAfterCreation, "Expected CalendarEvent to be generated as TENTATIVE");
+        Assertions.assertEquals("STATUS:CANCELLED",statusLineAfterCancellation, "Expected status to change after cancellation");
     }
 
 }
