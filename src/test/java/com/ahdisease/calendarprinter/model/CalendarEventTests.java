@@ -37,6 +37,7 @@ public class CalendarEventTests {
                 "BEGIN:VEVENT",
                 "SUMMARY:Spring Begins",
                 "UID:",
+                "SEQUENCE:0",
                 "DTSTART:20230321T050000Z",
                 "DTSTAMP",
                 "END:VEVENT"

@@ -34,6 +34,7 @@ public class CalendarEvent {
     private UUID uuid;
     private ZonedDateTime startDate;
     private ZonedDateTime createdDate;
+    private int sequence = 0;
 
     public CalendarEvent(String summary, ZonedDateTime startDate) {
         uuid = UUID.randomUUID();
@@ -57,6 +58,7 @@ public class CalendarEvent {
 
         eventText.append("\nSUMMARY:" + summary );
         eventText.append("\nUID:" + uuid);
+        eventText.append("\nSEQUENCE:" + sequence);
         eventText.append("\nDTSTART:" + DateToUTCString(startDate));
         eventText.append("\nDTSTAMP:" + DateToUTCString(createdDate));
 
@@ -72,6 +74,10 @@ public class CalendarEvent {
 
     public UUID getUuid() {
         return uuid;
+    }
+
+    public int getSequence() {
+        return sequence;
     }
 
     public ZonedDateTime getStartDate() {
