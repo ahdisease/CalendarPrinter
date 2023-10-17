@@ -35,7 +35,7 @@ This example represents all accepted base properties of an .ics file using the I
 - [ ] Add all properties to Calendar Event
     - [X] SUMMARY - Title of the Event
     - [X] UID - Unique identifier with UUID format
-    - [ ] SEQUENCE
+    - [X] SEQUENCE
     - [ ] STATUS
     - [ ] TRANSP
     - [ ] RRULE
