@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CalendarEventTests {
+    private final ZonedDateTime FIRST_DAY_OF_SPRING_DATE = ZonedDateTime.of(2023 , 03, 21, 0, 0, 0,0, ZoneId.of("EST",ZoneId.SHORT_IDS));
 
 
     @Test
@@ -21,9 +22,8 @@ public class CalendarEventTests {
 
         //ACT
         // create calendar event
-        ZonedDateTime dateTime = ZonedDateTime.of(2023 , 03, 21, 0, 0, 0,0, ZoneId.of("EST",ZoneId.SHORT_IDS));
-        CalendarEvent firstDayOfSpring = new CalendarEvent("Spring Begins", dateTime);
-        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",dateTime,true,true);
+        CalendarEvent firstDayOfSpring = new CalendarEvent("Spring Begins", FIRST_DAY_OF_SPRING_DATE);
+        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,true,true);
 
         //ASSERT
         // validate uid
@@ -55,8 +55,7 @@ public class CalendarEventTests {
 
 
         // create calendar event
-        ZonedDateTime dateTime = ZonedDateTime.of(2023 , 03, 21, 0, 0, 0,0, ZoneId.of("EST",ZoneId.SHORT_IDS));
-        CalendarEvent firstDayOfSpring = new CalendarEvent("Spring Begins", dateTime);
+        CalendarEvent firstDayOfSpring = new CalendarEvent("Spring Begins", FIRST_DAY_OF_SPRING_DATE);
 
         //ACT
         String iCalendarString = firstDayOfSpring.toString();
@@ -85,8 +84,7 @@ public class CalendarEventTests {
     public void confirmEvent_changes_status_to_confirmed() {
         //ARRANGE
         // create calendar event
-        ZonedDateTime dateTime = ZonedDateTime.of(2023 , 03, 21, 0, 0, 0,0, ZoneId.of("EST",ZoneId.SHORT_IDS));
-        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",dateTime,true, true);
+        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,true, true);
 
         String[] eventStringLines = tentativeEvent.toString().split("\n");
         String statusLineAfterCreation = null;
@@ -113,8 +111,7 @@ public class CalendarEventTests {
     public void cancelEvent_changes_status_to_cancelled() {
         //ARRANGE
         // create calendar event
-        ZonedDateTime dateTime = ZonedDateTime.of(2023 , 03, 21, 0, 0, 0,0, ZoneId.of("EST",ZoneId.SHORT_IDS));
-        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",dateTime,true,true);
+        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,true,true);
 
         String[] eventStringLines = tentativeEvent.toString().split("\n");
         String statusLineAfterCreation = null;
