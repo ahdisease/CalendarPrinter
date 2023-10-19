@@ -23,7 +23,7 @@ public class CalendarEventTests {
         // create calendar event
         ZonedDateTime dateTime = ZonedDateTime.of(2023 , 03, 21, 0, 0, 0,0, ZoneId.of("EST",ZoneId.SHORT_IDS));
         CalendarEvent firstDayOfSpring = new CalendarEvent("Spring Begins", dateTime);
-        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",dateTime,true);
+        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",dateTime,true,true);
 
         //ASSERT
         // validate uid
@@ -44,6 +44,7 @@ public class CalendarEventTests {
                 "UID:",
                 "SEQUENCE:0",
                 "STATUS:CONFIRMED",
+                "TRANSP:OPAQUE",
                 "DTSTART:20230321T050000Z",
                 "DTSTAMP",
                 "END:VEVENT"
@@ -85,7 +86,7 @@ public class CalendarEventTests {
         //ARRANGE
         // create calendar event
         ZonedDateTime dateTime = ZonedDateTime.of(2023 , 03, 21, 0, 0, 0,0, ZoneId.of("EST",ZoneId.SHORT_IDS));
-        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",dateTime,true);
+        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",dateTime,true, true);
 
         String[] eventStringLines = tentativeEvent.toString().split("\n");
         String statusLineAfterCreation = null;
@@ -113,7 +114,7 @@ public class CalendarEventTests {
         //ARRANGE
         // create calendar event
         ZonedDateTime dateTime = ZonedDateTime.of(2023 , 03, 21, 0, 0, 0,0, ZoneId.of("EST",ZoneId.SHORT_IDS));
-        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",dateTime,true);
+        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",dateTime,true,true);
 
         String[] eventStringLines = tentativeEvent.toString().split("\n");
         String statusLineAfterCreation = null;

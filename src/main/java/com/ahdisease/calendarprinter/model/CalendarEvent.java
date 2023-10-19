@@ -44,8 +44,14 @@ public class CalendarEvent {
     private ZonedDateTime createdDate;
     // STATUS property indicates whether the event is TENTATIVE, CONFIRMED, or CANCELLED
     private Status status;
+    // TRANSP property can be set to TRANSPARENT or OPAQUE
+    //      TRANSPARENT - does not consume time on a calendar (e.g. a Holiday or an event from another calendar shared for reference only)
+    //      OPAQUE - consumes time on a calendar, allowing the event to be detected by free-busy time searches (e.g. a confirmed meeting)
+    private boolean transparent;
 
-
+    //TODO instead of making lots of complex constructors, I should build one all-access constructor and a factory class
+    // so it's clear what kind of event is being created (e.g. Holiday, Optional Meeting, et cetra) but there's only one
+    // constructor to test
     public CalendarEvent(String summary, ZonedDateTime startDate) {
         uuid = UUID.randomUUID();
         this.summary = summary;
@@ -54,7 +60,7 @@ public class CalendarEvent {
         this.status = Status.CONFIRMED;
     }
 
-    public CalendarEvent(String summary, ZonedDateTime startDate, boolean tentativeEvent) {
+    public CalendarEvent(String summary, ZonedDateTime startDate, boolean tentativeEvent, boolean transparent) {
         uuid = UUID.randomUUID();
         this.summary = summary;
         this.startDate = startDate;
@@ -64,6 +70,7 @@ public class CalendarEvent {
         } else {
             this.status = Status.CONFIRMED;
         }
+        this.transparent = transparent;
     }
 
     private String DateToUTCString(ZonedDateTime date) {
@@ -74,10 +81,12 @@ public class CalendarEvent {
 
     public void confirmEvent() {
         status = Status.CONFIRMED;
+        transparent = false;
     }
 
     public void cancelEvent() {
         status = Status.CANCELLED;
+        transparent = true;
     }
 
     // overrides
@@ -91,8 +100,10 @@ public class CalendarEvent {
         eventText.append("\nUID:" + uuid);
         eventText.append("\nSEQUENCE:" + sequence);
         eventText.append("\nSTATUS:" + status.name());
+        eventText.append("\nTRANSP:" + (transparent ? "TRANSPARENT" : "OPAQUE"));
         eventText.append("\nDTSTART:" + DateToUTCString(startDate));
         eventText.append("\nDTSTAMP:" + DateToUTCString(createdDate));
+
 
         eventText.append("\nEND:VEVENT");
         return eventText.toString();
