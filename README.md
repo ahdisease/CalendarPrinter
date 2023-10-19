@@ -37,7 +37,7 @@ This example represents all accepted base properties of an .ics file using the I
     - [X] UID - Unique identifier with UUID format
     - [X] SEQUENCE
     - [X] STATUS
-    - [ ] TRANSP
+    - [X] TRANSP
     - [ ] RRULE
     - [X] DTSTART - Timestamp indicating when an event begins
     - [ ] DTEND
@@ -53,4 +53,5 @@ This example represents all accepted base properties of an .ics file using the I
     - [ ] PRODID
     - [ ] CALSCALE
     - [ ] METHOD
+- [ ] Create CalendarEventFactory class
 - [ ] Create UI to Generate Calendar Events
