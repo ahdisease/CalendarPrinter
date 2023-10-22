@@ -40,7 +40,7 @@ This example represents all accepted base properties of an .ics file using the I
     - [X] TRANSP
     - [ ] RRULE
     - [X] DTSTART - Timestamp indicating when an event begins
-    - [ ] DTEND
+    - [X] DTEND
     - [X] DTSTAMP - Timestamp indicating when an event was created
     - [ ] CATEGORIES
     - [ ] LOCATION

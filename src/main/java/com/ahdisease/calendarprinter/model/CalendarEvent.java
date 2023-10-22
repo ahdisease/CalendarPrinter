@@ -38,16 +38,19 @@ public class CalendarEvent {
     private UUID uuid;
     // SEQUENCE property indicates the number of revisions to the event
     private int sequence = 0;
-    // DTSTART property indicates the UTC time at which the event begins
-    private ZonedDateTime startDate;
-    // DTSTAMP property indicates the UTC time at which the event was created
-    private ZonedDateTime createdDate;
-    // STATUS property indicates whether the event is TENTATIVE, CONFIRMED, or CANCELLED
-    private Status status;
     // TRANSP property can be set to TRANSPARENT or OPAQUE
     //      TRANSPARENT - does not consume time on a calendar (e.g. a Holiday or an event from another calendar shared for reference only)
     //      OPAQUE - consumes time on a calendar, allowing the event to be detected by free-busy time searches (e.g. a confirmed meeting)
     private boolean transparent;
+    // DTSTART property indicates the UTC time at which the event begins (inclusive)
+    private ZonedDateTime startDate;
+    // DTEND property indicates the UTC time at which the event ends (exclusive)
+    private ZonedDateTime endDate;
+    // DTSTAMP property indicates the UTC time at which the event was created
+    private ZonedDateTime createdDate;
+    // STATUS property indicates whether the event is TENTATIVE, CONFIRMED, or CANCELLED
+    private Status status;
+
 
     //TODO instead of making lots of complex constructors, I should build one all-access constructor and a factory class
     // so it's clear what kind of event is being created (e.g. Holiday, Optional Meeting, et cetra) but there's only one
@@ -56,14 +59,16 @@ public class CalendarEvent {
         uuid = UUID.randomUUID();
         this.summary = summary;
         this.startDate = startDate;
+        this.endDate = startDate.plusDays(1);
         this.createdDate = ZonedDateTime.now();
         this.status = Status.CONFIRMED;
     }
 
-    public CalendarEvent(String summary, ZonedDateTime startDate, boolean tentativeEvent, boolean transparent) {
+    public CalendarEvent(String summary, ZonedDateTime startDate, ZonedDateTime endDate, boolean tentativeEvent, boolean transparent) {
         uuid = UUID.randomUUID();
         this.summary = summary;
         this.startDate = startDate;
+        this.endDate = endDate;
         this.createdDate = ZonedDateTime.now();
         if (tentativeEvent) {
             this.status = Status.TENTATIVE;
@@ -102,6 +107,7 @@ public class CalendarEvent {
         eventText.append("\nSTATUS:" + status.name());
         eventText.append("\nTRANSP:" + (transparent ? "TRANSPARENT" : "OPAQUE"));
         eventText.append("\nDTSTART:" + DateToUTCString(startDate));
+        eventText.append("\nDTEND:" + DateToUTCString(endDate));
         eventText.append("\nDTSTAMP:" + DateToUTCString(createdDate));
 
 

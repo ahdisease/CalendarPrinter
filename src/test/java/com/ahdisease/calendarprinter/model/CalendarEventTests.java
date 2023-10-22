@@ -12,7 +12,6 @@ import java.util.regex.Pattern;
 public class CalendarEventTests {
     private final ZonedDateTime FIRST_DAY_OF_SPRING_DATE = ZonedDateTime.of(2023 , 03, 21, 0, 0, 0,0, ZoneId.of("EST",ZoneId.SHORT_IDS));
 
-
     @Test
     public void constructor_generates_valid_UID() {
         //ARRANGE
@@ -23,7 +22,7 @@ public class CalendarEventTests {
         //ACT
         // create calendar event
         CalendarEvent firstDayOfSpring = new CalendarEvent("Spring Begins", FIRST_DAY_OF_SPRING_DATE);
-        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,true,true);
+        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),true,true);
 
         //ASSERT
         // validate uid
@@ -46,6 +45,7 @@ public class CalendarEventTests {
                 "STATUS:CONFIRMED",
                 "TRANSP:OPAQUE",
                 "DTSTART:20230321T050000Z",
+                "DTEND:20230322T050000Z",
                 "DTSTAMP",
                 "END:VEVENT"
         };
@@ -84,7 +84,7 @@ public class CalendarEventTests {
     public void confirmEvent_changes_status_to_confirmed() {
         //ARRANGE
         // create calendar event
-        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,true, true);
+        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),true, true);
 
         String[] eventStringLines = tentativeEvent.toString().split("\n");
         String statusLineAfterCreation = null;
@@ -111,7 +111,7 @@ public class CalendarEventTests {
     public void cancelEvent_changes_status_to_cancelled() {
         //ARRANGE
         // create calendar event
-        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,true,true);
+        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),true,true);
 
         String[] eventStringLines = tentativeEvent.toString().split("\n");
         String statusLineAfterCreation = null;
