@@ -35,14 +35,14 @@ This example represents all accepted base properties of an .ics file using the I
 - [ ] Add all properties to Calendar Event
     - [X] SUMMARY - Title of the Event
     - [X] UID - Unique identifier with UUID format
-    - [X] SEQUENCE
-    - [X] STATUS
-    - [X] TRANSP
+    - [X] SEQUENCE - Integer describing the number of revsions (starts at 0)
+    - [X] STATUS - "TENTATIVE", "CONFIRMED", or "CANCELLED"; indicates the state of an event
+    - [X] TRANSP - "TRANSPARENT" or "OPAQUE"; transparent events should be ignored when excluding time availability
     - [ ] RRULE
-    - [X] DTSTART - Timestamp indicating when an event begins
-    - [X] DTEND
-    - [X] DTSTAMP - Timestamp indicating when an event was created
-    - [ ] CATEGORIES
+    - [X] DTSTART - UTC Timestamp indicating when an event begins (inclusive)
+    - [X] DTEND - UTC Timestamp indicating when and event ends (exclusive)
+    - [X] DTSTAMP - UTC Timestamp indicating when an event was created
+    - [X] CATEGORIES - A comma delimited list of descriptive values for use in filtering and searching
     - [ ] LOCATION
     - [ ] GEO
     - [ ] DESCRIPTION

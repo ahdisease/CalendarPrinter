@@ -1,6 +1,7 @@
 package com.ahdisease.calendarprinter.model;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.ZoneId;
@@ -11,6 +12,14 @@ import java.util.regex.Pattern;
 
 public class CalendarEventTests {
     private final ZonedDateTime FIRST_DAY_OF_SPRING_DATE = ZonedDateTime.of(2023 , 03, 21, 0, 0, 0,0, ZoneId.of("EST",ZoneId.SHORT_IDS));
+    //private final ZonedDateTime OCTOBER_22_3PM = ZonedDateTime.of(2023,10,22,15,0,0,0,ZoneId.of("EST",ZoneId.SHORT_IDS));
+    private CalendarEvent event1;
+
+    @BeforeEach
+    public void resetEvents() {
+        event1 = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,null,new String[]{"HOLIDAY","SEASON"});
+
+    }
 
     @Test
     public void constructor_generates_valid_UID() {
@@ -21,17 +30,12 @@ public class CalendarEventTests {
 
         //ACT
         // create calendar event
-        CalendarEvent firstDayOfSpring = new CalendarEvent("Spring Begins", FIRST_DAY_OF_SPRING_DATE);
-        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),true,true);
+        CalendarEvent firstDayOfSpring = event1;
 
         //ASSERT
         // validate uid
         Matcher uidMatcher = uidPattern.matcher(firstDayOfSpring.getUuid().toString());
         Assertions.assertTrue(uidMatcher.find(), "Expected contructor to generate valid UID");
-
-        uidMatcher = uidPattern.matcher(tentativeEvent.getUuid().toString());
-        Assertions.assertTrue(uidMatcher.find(), "Expected contructor to generate valid UID - tentative event");
-
     }
     @Test
     public void toString_returns_expected_value() {
@@ -43,10 +47,11 @@ public class CalendarEventTests {
                 "UID:",
                 "SEQUENCE:0",
                 "STATUS:CONFIRMED",
-                "TRANSP:OPAQUE",
+                "TRANSP:TRANSPARENT",
                 "DTSTART:20230321T050000Z",
                 "DTEND:20230322T050000Z",
                 "DTSTAMP",
+                "CATEGORIES:HOLIDAY,SEASON",
                 "END:VEVENT"
         };
 
@@ -55,7 +60,7 @@ public class CalendarEventTests {
 
 
         // create calendar event
-        CalendarEvent firstDayOfSpring = new CalendarEvent("Spring Begins", FIRST_DAY_OF_SPRING_DATE);
+        CalendarEvent firstDayOfSpring = event1;
 
         //ACT
         String iCalendarString = firstDayOfSpring.toString();
@@ -84,7 +89,7 @@ public class CalendarEventTests {
     public void confirmEvent_changes_status_to_confirmed() {
         //ARRANGE
         // create calendar event
-        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),true, true);
+        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),true, true, null, null);
 
         String[] eventStringLines = tentativeEvent.toString().split("\n");
         String statusLineAfterCreation = null;
@@ -111,7 +116,7 @@ public class CalendarEventTests {
     public void cancelEvent_changes_status_to_cancelled() {
         //ARRANGE
         // create calendar event
-        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),true,true);
+        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),true,true, null, null);
 
         String[] eventStringLines = tentativeEvent.toString().split("\n");
         String statusLineAfterCreation = null;
