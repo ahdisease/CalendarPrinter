@@ -7,18 +7,21 @@ import org.junit.jupiter.api.Test;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
+import java.util.Arrays;
+import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CalendarEventTests {
     private final ZonedDateTime FIRST_DAY_OF_SPRING_DATE = ZonedDateTime.of(2023 , 03, 21, 0, 0, 0,0, ZoneId.of("EST",ZoneId.SHORT_IDS));
-    //private final ZonedDateTime OCTOBER_22_3PM = ZonedDateTime.of(2023,10,22,15,0,0,0,ZoneId.of("EST",ZoneId.SHORT_IDS));
+    private final ZonedDateTime OCTOBER_22_3PM = ZonedDateTime.of(2023,10,22,15,0,0,0,ZoneId.of("EST",ZoneId.SHORT_IDS));
     private CalendarEvent event1;
+    private CalendarEvent event2;
 
     @BeforeEach
     public void resetEvents() {
         event1 = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,null,new String[]{"HOLIDAY","SEASON"});
-
+        event2 = new CalendarEvent("Spanish Club Meeting",OCTOBER_22_3PM,OCTOBER_22_3PM.plusHours(2),false,false, "es",new String[]{"EDUCATION", "BEGINNER"});
     }
 
     @Test
@@ -41,7 +44,7 @@ public class CalendarEventTests {
     public void toString_returns_expected_value() {
         //ARRANGE
         // create expected calendar event string
-        String[] expectedICalendarLines = new String[] {
+        String[] expectedICalendarLines1 = new String[] {
                 "BEGIN:VEVENT",
                 "SUMMARY:Spring Begins",
                 "UID:",
@@ -67,7 +70,7 @@ public class CalendarEventTests {
         String[] iCalendarLines = iCalendarString.split("\n");
 
         //ASSERT
-        Assertions.assertEquals(expectedICalendarLines.length, iCalendarLines.length, "New CalendarEvent object should have expected number of string lines: " + expectedICalendarLines.length);
+        Assertions.assertEquals(expectedICalendarLines1.length, iCalendarLines.length, "New CalendarEvent object should have expected number of string lines: " + expectedICalendarLines1.length);
 
         for (int i = 0; i < iCalendarLines.length; i++) {
             if(iCalendarLines[i].startsWith("UID")) {
@@ -81,7 +84,7 @@ public class CalendarEventTests {
                 continue;
             }
 
-            Assertions.assertEquals(expectedICalendarLines[i],iCalendarLines[i],"Expected line of String to match: " + i);
+            Assertions.assertEquals(expectedICalendarLines1[i],iCalendarLines[i],"Expected line of String to match: " + i);
         }
     }
 
@@ -138,6 +141,37 @@ public class CalendarEventTests {
         //ASSERT
         Assertions.assertEquals("STATUS:TENTATIVE",statusLineAfterCreation, "Expected CalendarEvent to be generated as TENTATIVE");
         Assertions.assertEquals("STATUS:CANCELLED",statusLineAfterCancellation, "Expected status to change after cancellation");
+    }
+    
+    @Test
+    public void allCategoriesToString_returns_empty_string_if_language_and_category_array_are_invalid() {
+        //ARRANGE
+        CalendarEvent firstDayOfSpringNullCategories = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,null,null);
+        CalendarEvent firstDayOfSpringBlankLanguage = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,"",null);
+        CalendarEvent firstDayOfSpringEmptyArray = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,null,new String[]{});
+        
+        //ACT
+        String nullCategoriesPropertyString = getPropertyStringFromToString(firstDayOfSpringNullCategories,"CATEGORIES");
+        String blankLanguagePropertyString = getPropertyStringFromToString(firstDayOfSpringBlankLanguage,"CATEGORIES");
+        String emptyArrayPropertyString = getPropertyStringFromToString(firstDayOfSpringEmptyArray,"CATEGORIES");
+
+        //ASSERT
+        Assertions.assertEquals("", nullCategoriesPropertyString, "No CATEGORIES property expected when languageCategory and categories are both null");
+        Assertions.assertEquals("", blankLanguagePropertyString, "No CATEGORIES property expected when languageCategory is blank and categories is null");
+        Assertions.assertEquals("", nullCategoriesPropertyString, "No CATEGORIES property expected when languageCategory null and categories is empty");
+
+    }
+
+    private String getPropertyStringFromToString(CalendarEvent event, String propertyName) {
+        String[] eventStrings = event.toString().split("\n");
+        try {
+            return Arrays.stream(eventStrings).filter(line -> { return line.startsWith(propertyName);}).findAny().get();
+        } catch (NoSuchElementException e) {
+            return "";
+        } catch (Exception e) {
+            Assertions.fail();
+            return "Unexpected exception: " + e.getMessage();
+        }
     }
 
 }
