@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class CalendarEvent {
     /*
@@ -140,7 +141,7 @@ public class CalendarEvent {
         }
 
         // add all categories to one list
-        List<String> allCategories = Arrays.stream(categories).toList();
+        List<String> allCategories = Arrays.stream(categories).collect(Collectors.toList());
 
         if (languageCategory!=null && !languageCategory.isEmpty()) {
             allCategories.add(languageCategory);
