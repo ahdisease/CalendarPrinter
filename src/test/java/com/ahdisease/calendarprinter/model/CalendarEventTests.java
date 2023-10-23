@@ -15,13 +15,17 @@ import java.util.regex.Pattern;
 public class CalendarEventTests {
     private final ZonedDateTime FIRST_DAY_OF_SPRING_DATE = ZonedDateTime.of(2023 , 03, 21, 0, 0, 0,0, ZoneId.of("EST",ZoneId.SHORT_IDS));
     private final ZonedDateTime OCTOBER_22_3PM = ZonedDateTime.of(2023,10,22,15,0,0,0,ZoneId.of("EST",ZoneId.SHORT_IDS));
+    private final ZonedDateTime FIRST_WEEKLY_MEETING_TIME = ZonedDateTime.of(2023,10,23,9,0,0,0,ZoneId.of("EST",ZoneId.SHORT_IDS));
     private CalendarEvent event1;
     private CalendarEvent event2;
+    private CalendarEvent event3;
 
     @BeforeEach
     public void resetEvents() {
         event1 = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,null,new String[]{"HOLIDAY","SEASON"});
         event2 = new CalendarEvent("Spanish Club Meeting",OCTOBER_22_3PM,OCTOBER_22_3PM.plusHours(2),false,false, "es",new String[]{"EDUCATION", "BEGINNER"});
+        event3 = new CalendarEvent("Rencontre hebdomadaire", FIRST_WEEKLY_MEETING_TIME, FIRST_WEEKLY_MEETING_TIME.plusMinutes(30),true,false,"fr",null);
+
     }
 
     @Test
@@ -142,6 +146,20 @@ public class CalendarEventTests {
         Assertions.assertEquals("", blankLanguagePropertyString, "No CATEGORIES property expected when languageCategory is blank and categories is null");
         Assertions.assertEquals("", emptyArrayPropertyString, "No CATEGORIES property expected when languageCategory null and categories is empty");
 
+    }
+
+    @Test
+    public void allCategoriesToString_returns_expected_results() {
+        //ARRANGE
+
+        //ACT
+        String springDayCATEGORIES = getPropertyStringFromToString(event1,"CATEGORIES");
+        String spanishClubCATEGORIES = getPropertyStringFromToString(event2,"CATEGORIES");
+        String weeklyMeetingCATEGORIES = getPropertyStringFromToString(event3,"CATEGORIES");
+        //ASSERT
+        Assertions.assertEquals("CATEGORIES:HOLIDAY,SEASON",springDayCATEGORIES,"Categories without language should return comma delimited list of categories array");
+        Assertions.assertEquals("CATEGORIES:EDUCATION,BEGINNER,es",spanishClubCATEGORIES,"All categories should be listed, with languageCategory listed last");
+        Assertions.assertEquals("CATEGORIES:fr", weeklyMeetingCATEGORIES, "Language code expected in CATEGORIES string");
     }
 
 
