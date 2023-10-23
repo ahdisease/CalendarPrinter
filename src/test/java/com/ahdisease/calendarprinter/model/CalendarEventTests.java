@@ -94,22 +94,13 @@ public class CalendarEventTests {
         // create calendar event
         CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),true, true, null, null);
 
-        String[] eventStringLines = tentativeEvent.toString().split("\n");
-        String statusLineAfterCreation = null;
-        int statusIndex = -1;
-        for (int i = 0; i < eventStringLines.length; i++) {
-            if (eventStringLines[i].startsWith("STATUS:")) {
-                statusLineAfterCreation = eventStringLines[i];
-                statusIndex=i;
-            }
-        }
-        if (statusLineAfterCreation == null) {
+        String statusLineAfterCreation = getPropertyStringFromToString(tentativeEvent,"STATUS");
+        if (statusLineAfterCreation.isEmpty()) {
             Assertions.fail("Unable to identify STATUS in CalendarEvent String");
         }
         //ACT
         tentativeEvent.confirmEvent();
-        eventStringLines = tentativeEvent.toString().split("\n");
-        String statusLineAfterConfirmation = eventStringLines[statusIndex];
+        String statusLineAfterConfirmation = getPropertyStringFromToString(tentativeEvent,"STATUS");
 
         //ASSERT
         Assertions.assertEquals("STATUS:TENTATIVE",statusLineAfterCreation, "Expected CalendarEvent to be generated as TENTATIVE");
@@ -121,22 +112,13 @@ public class CalendarEventTests {
         // create calendar event
         CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),true,true, null, null);
 
-        String[] eventStringLines = tentativeEvent.toString().split("\n");
-        String statusLineAfterCreation = null;
-        int statusIndex = -1;
-        for (int i = 0; i < eventStringLines.length; i++) {
-            if (eventStringLines[i].startsWith("STATUS:")) {
-                statusLineAfterCreation = eventStringLines[i];
-                statusIndex=i;
-            }
-        }
-        if (statusLineAfterCreation == null) {
+        String statusLineAfterCreation = getPropertyStringFromToString(tentativeEvent,"STATUS");
+        if (statusLineAfterCreation.isEmpty()) {
             Assertions.fail("Unable to identify STATUS in CalendarEvent String");
         }
         //ACT
         tentativeEvent.cancelEvent();
-        eventStringLines = tentativeEvent.toString().split("\n");
-        String statusLineAfterCancellation = eventStringLines[statusIndex];
+        String statusLineAfterCancellation = getPropertyStringFromToString(tentativeEvent,"STATUS");
 
         //ASSERT
         Assertions.assertEquals("STATUS:TENTATIVE",statusLineAfterCreation, "Expected CalendarEvent to be generated as TENTATIVE");
@@ -158,9 +140,11 @@ public class CalendarEventTests {
         //ASSERT
         Assertions.assertEquals("", nullCategoriesPropertyString, "No CATEGORIES property expected when languageCategory and categories are both null");
         Assertions.assertEquals("", blankLanguagePropertyString, "No CATEGORIES property expected when languageCategory is blank and categories is null");
-        Assertions.assertEquals("", nullCategoriesPropertyString, "No CATEGORIES property expected when languageCategory null and categories is empty");
+        Assertions.assertEquals("", emptyArrayPropertyString, "No CATEGORIES property expected when languageCategory null and categories is empty");
 
     }
+
+
 
     private String getPropertyStringFromToString(CalendarEvent event, String propertyName) {
         String[] eventStrings = event.toString().split("\n");
@@ -169,8 +153,8 @@ public class CalendarEventTests {
         } catch (NoSuchElementException e) {
             return "";
         } catch (Exception e) {
-            Assertions.fail();
-            return "Unexpected exception: " + e.getMessage();
+            Assertions.fail("Unexpected exception: " + e.getMessage());
+            return null;
         }
     }
 
