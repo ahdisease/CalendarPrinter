@@ -7,8 +7,6 @@ import org.junit.jupiter.api.Test;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-import java.util.Arrays;
-import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -97,14 +95,20 @@ public class CalendarEventTests {
         //ARRANGE
         // create calendar event
         CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),true, true, null, null);
+        String[] eventString = tentativeEvent.toString().split("\n");
 
-        String statusLineAfterCreation = getPropertyStringFromToString(tentativeEvent,"STATUS");
-        if (statusLineAfterCreation.isEmpty()) {
+        // find index of STATUS property
+        int statusIndex = getPropertyLineIndexFromToString(eventString,"STATUS");
+        if (statusIndex < 0) {
             Assertions.fail("Unable to identify STATUS in CalendarEvent String");
         }
+
         //ACT
+        String statusLineAfterCreation = eventString[statusIndex];
+
         tentativeEvent.confirmEvent();
-        String statusLineAfterConfirmation = getPropertyStringFromToString(tentativeEvent,"STATUS");
+        eventString = tentativeEvent.toString().split("\n");
+        String statusLineAfterConfirmation = eventString[statusIndex];
 
         //ASSERT
         Assertions.assertEquals("STATUS:TENTATIVE",statusLineAfterCreation, "Expected CalendarEvent to be generated as TENTATIVE");
@@ -115,14 +119,20 @@ public class CalendarEventTests {
         //ARRANGE
         // create calendar event
         CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),true,true, null, null);
+        String[] eventString = tentativeEvent.toString().split("\n");
 
-        String statusLineAfterCreation = getPropertyStringFromToString(tentativeEvent,"STATUS");
-        if (statusLineAfterCreation.isEmpty()) {
+        // find index of STATUS property
+        int statusIndex = getPropertyLineIndexFromToString(eventString,"STATUS");
+        if (statusIndex < 0) {
             Assertions.fail("Unable to identify STATUS in CalendarEvent String");
         }
+
         //ACT
+        String statusLineAfterCreation = eventString[statusIndex];
+
         tentativeEvent.cancelEvent();
-        String statusLineAfterCancellation = getPropertyStringFromToString(tentativeEvent,"STATUS");
+        eventString = tentativeEvent.toString().split("\n");
+        String statusLineAfterCancellation = eventString[statusIndex];
 
         //ASSERT
         Assertions.assertEquals("STATUS:TENTATIVE",statusLineAfterCreation, "Expected CalendarEvent to be generated as TENTATIVE");
@@ -132,30 +142,34 @@ public class CalendarEventTests {
     @Test
     public void allCategoriesToString_returns_empty_string_if_language_and_category_array_are_invalid() {
         //ARRANGE
-        CalendarEvent firstDayOfSpringNullCategories = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,null,null);
-        CalendarEvent firstDayOfSpringBlankLanguage = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,"",null);
-        CalendarEvent firstDayOfSpringEmptyArray = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,null,new String[]{});
+        CalendarEvent nullCategoriesEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,null,null);
+        CalendarEvent blankLanguageEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,"",null);
+        CalendarEvent emptyArrayEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,null,new String[]{});
         
         //ACT
-        String nullCategoriesPropertyString = getPropertyStringFromToString(firstDayOfSpringNullCategories,"CATEGORIES");
-        String blankLanguagePropertyString = getPropertyStringFromToString(firstDayOfSpringBlankLanguage,"CATEGORIES");
-        String emptyArrayPropertyString = getPropertyStringFromToString(firstDayOfSpringEmptyArray,"CATEGORIES");
+        int nullCategoriesPropertyIndex = getPropertyLineIndexFromToString(nullCategoriesEvent,"CATEGORIES");
+        int blankLanguagePropertyIndex = getPropertyLineIndexFromToString(blankLanguageEvent,"CATEGORIES");
+        int emptyArrayPropertyIndex = getPropertyLineIndexFromToString(emptyArrayEvent,"CATEGORIES");
 
         //ASSERT
-        Assertions.assertEquals("", nullCategoriesPropertyString, "No CATEGORIES property expected when languageCategory and categories are both null");
-        Assertions.assertEquals("", blankLanguagePropertyString, "No CATEGORIES property expected when languageCategory is blank and categories is null");
-        Assertions.assertEquals("", emptyArrayPropertyString, "No CATEGORIES property expected when languageCategory null and categories is empty");
+        Assertions.assertEquals(-1, nullCategoriesPropertyIndex, "No CATEGORIES property expected when languageCategory and categories are both null");
+        Assertions.assertEquals(-1, blankLanguagePropertyIndex, "No CATEGORIES property expected when languageCategory is blank and categories is null");
+        Assertions.assertEquals(-1, emptyArrayPropertyIndex, "No CATEGORIES property expected when languageCategory null and categories is empty");
 
     }
 
     @Test
     public void allCategoriesToString_returns_expected_results() {
         //ARRANGE
+        String[] springDayStrings = event1.toString().split("\n");
+        String[] spanishClubStrings = event2.toString().split("\n");
+        String[] weeklyMeetingStrings = event3.toString().split("\n");
 
         //ACT
-        String springDayCATEGORIES = getPropertyStringFromToString(event1,"CATEGORIES");
-        String spanishClubCATEGORIES = getPropertyStringFromToString(event2,"CATEGORIES");
-        String weeklyMeetingCATEGORIES = getPropertyStringFromToString(event3,"CATEGORIES");
+        String springDayCATEGORIES = springDayStrings[getPropertyLineIndexFromToString(springDayStrings,"CATEGORIES")];
+        String spanishClubCATEGORIES = spanishClubStrings[getPropertyLineIndexFromToString(spanishClubStrings,"CATEGORIES")];
+        String weeklyMeetingCATEGORIES = weeklyMeetingStrings[getPropertyLineIndexFromToString(weeklyMeetingStrings,"CATEGORIES")];
+
         //ASSERT
         Assertions.assertEquals("CATEGORIES:HOLIDAY,SEASON",springDayCATEGORIES,"Categories without language should return comma delimited list of categories array");
         Assertions.assertEquals("CATEGORIES:EDUCATION,BEGINNER,es",spanishClubCATEGORIES,"All categories should be listed, with languageCategory listed last");
@@ -164,16 +178,24 @@ public class CalendarEventTests {
 
 
 
-    private String getPropertyStringFromToString(CalendarEvent event, String propertyName) {
+    private int getPropertyLineIndexFromToString(CalendarEvent event, String propertyName) {
         String[] eventStrings = event.toString().split("\n");
-        try {
-            return Arrays.stream(eventStrings).filter(line -> { return line.startsWith(propertyName);}).findAny().get();
-        } catch (NoSuchElementException e) {
-            return "";
-        } catch (Exception e) {
-            Assertions.fail("Unexpected exception: " + e.getMessage());
-            return null;
+
+        for (int i = 0; i < eventStrings.length; i++) {
+            if (eventStrings[i].startsWith(propertyName)) {
+                return i;
+            }
         }
+        return -1;
+    }
+
+    private int getPropertyLineIndexFromToString(String[] eventStrings, String propertyName) {
+        for (int i = 0; i < eventStrings.length; i++) {
+            if (eventStrings[i].startsWith(propertyName)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
 }
