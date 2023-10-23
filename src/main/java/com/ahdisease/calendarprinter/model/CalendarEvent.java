@@ -4,10 +4,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CalendarEvent {
@@ -56,7 +53,7 @@ public class CalendarEvent {
     private ZonedDateTime createdDate;
     // CATEGORIES property is a comma separated list of identifiers attached to the event
     //  Only one language category can be included
-    private String languageCategory;
+    private Locale languageCategory;
     private String[] categories;
     // STATUS property indicates whether the event is TENTATIVE, CONFIRMED, or CANCELLED
     private Status status;
@@ -77,7 +74,10 @@ public class CalendarEvent {
             this.status = Status.CONFIRMED;
         }
         this.transparent = transparent;
-        this.languageCategory = languageCategory;
+        if (languageCategory != null && languageCategory.matches("^[a-z]{2,3}(?:-[A-Z]{2,3}(?:-[a-zA-Z]{4})?)?$")) {
+            // language tag format from
+            this.languageCategory = Locale.forLanguageTag(languageCategory);
+        }
         this.categories = categories;
     }
 
@@ -122,7 +122,7 @@ public class CalendarEvent {
 
     private String allCategoriesToString() {
         // return blank if no associated categories
-        if ((languageCategory==null || languageCategory.isEmpty()) && (categories == null || categories.length == 0 )) {
+        if ((languageCategory==null || languageCategory.toLanguageTag().isBlank()) && (categories == null || categories.length == 0 )) {
             return "";
         }
 
@@ -131,20 +131,20 @@ public class CalendarEvent {
         // Because we know at least one of the two tested instance variables contains a value, an
         // invalid categories array means we only need to return the language.
         if (categories == null || categories.length == 0){
-            returnString.append(languageCategory);
+            returnString.append(languageCategory.toLanguageTag());
             return returnString.toString();
         }
 
         // If categories is only one value, no need for the stream below
-        if (categories.length == 1 && languageCategory.isEmpty()) {
+        if (categories.length == 1 && (languageCategory == null || languageCategory.toLanguageTag().isBlank())) {
             returnString.append(categories[0]);
         }
 
         // add all categories to one list
         List<String> allCategories = Arrays.stream(categories).collect(Collectors.toList());
 
-        if (languageCategory!=null && !languageCategory.isEmpty()) {
-            allCategories.add(languageCategory);
+        if (languageCategory != null && !languageCategory.toLanguageTag().isBlank()) {
+            allCategories.add(languageCategory.toLanguageTag());
         }
 
         // map categories to add commas between and add to StringBuilder
