@@ -116,16 +116,22 @@ public class CalendarEvent {
         // If so, this functionality should be moved to CalendarFileWriter
         StringBuilder eventText = new StringBuilder("BEGIN:VEVENT");
 
-        eventText.append("\nSUMMARY:" + summary);
+        if (summary != null) {
+            eventText.append("\nSUMMARY:" + summary);
+        }
         eventText.append("\nUID:" + uuid);
         eventText.append("\nSEQUENCE:" + sequence);
         eventText.append("\nSTATUS:" + status.name());
         eventText.append("\nTRANSP:" + (transparent ? "TRANSPARENT" : "OPAQUE"));
         eventText.append("\nDTSTART:" + DateToUTCString(startDate));
-        eventText.append("\nDTEND:" + DateToUTCString(endDate));
+        if (endDate != null) {
+            eventText.append("\nDTEND:" + DateToUTCString(endDate));
+        }
         eventText.append("\nDTSTAMP:" + DateToUTCString(createdDate));
         eventText.append(allCategoriesToString());
-        eventText.append("\nLOCATION:" + location);
+        if (location != null) {
+            eventText.append("\nLOCATION:" + location);
+        }
 
 
 

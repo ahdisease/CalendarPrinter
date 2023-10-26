@@ -43,7 +43,20 @@ public class CalendarEventTests {
         Assertions.assertTrue(uidMatcher.find(), "Expected contructor to generate valid UID");
     }
     @Test
-    public void toString_returns_expected_value() {
+    public void constructor_throws_exception_when_startDate_is_null() {
+        //ARRANGE
+
+        //ACT & ASSERT
+        try {
+            CalendarEvent nullEvent = new CalendarEvent(null,null,null,false,false,null,null,null);
+        } catch (IllegalArgumentException e) {
+            return;
+        }
+        Assertions.fail("startDate cannot be null");
+        //ASSERT
+    }
+    @Test
+    public void toString_returns_expected_value_for_valid_parameters() {
         //ARRANGE
         // create expected calendar event string
         String[] expectedToStringLinesEvent1 = new String[] {
@@ -77,8 +90,45 @@ public class CalendarEventTests {
 
         for (int i = 0; i < iCalendarLines.length; i++) {
             if(iCalendarLines[i].startsWith("UID")) {
-                Matcher uidToStringMatcher = uidToStringPattern.matcher(iCalendarLines[i]);
-                Assertions.assertTrue(uidToStringMatcher.find(),"Expected UID line to match format");
+                //UID is necessary to be considered a valid VEVENT but format is validated elsewhere.
+                continue;
+            }
+
+            if(iCalendarLines[i].startsWith("DTSTAMP")) {
+                // DTSTAMP is necessary to be considered a valid VEVENT but is for information only.
+                continue;
+            }
+
+            Assertions.assertEquals(expectedToStringLinesEvent1[i],iCalendarLines[i],"Expected line of String to match: " + i);
+        }
+    }
+    @Test
+    public void toString_returns_expected_value_for_null_parameters() {
+        //ARRANGE
+        // create expected calendar event string
+        String[] expectedToStringLinesEvent1 = new String[] {
+                "BEGIN:VEVENT",
+                "UID:",
+                "SEQUENCE:0",
+                "STATUS:CONFIRMED",
+                "TRANSP:OPAQUE",
+                "DTSTART:20230321T050000Z",
+                "DTSTAMP",
+                "END:VEVENT"
+        };
+
+        // create calendar event
+        CalendarEvent firstDayOfSpring = new CalendarEvent(null,FIRST_DAY_OF_SPRING_DATE,null,false,false,null,null,null);
+
+        //ACT
+        String[] iCalendarLines = firstDayOfSpring.toString().split("\n");
+
+        //ASSERT
+        Assertions.assertEquals(expectedToStringLinesEvent1.length, iCalendarLines.length, "New CalendarEvent object should have expected number of string lines: " + expectedToStringLinesEvent1.length);
+
+        for (int i = 0; i < iCalendarLines.length; i++) {
+            if(iCalendarLines[i].startsWith("UID")) {
+                //UID is necessary to be considered a valid VEVENT but format is validated elsewhere.
                 continue;
             }
 
@@ -175,20 +225,6 @@ public class CalendarEventTests {
         Assertions.assertEquals("CATEGORIES:HOLIDAY,SEASON",springDayCATEGORIES,"Categories without language should return comma delimited list of categories array");
         Assertions.assertEquals("CATEGORIES:EDUCATION,BEGINNER,es",spanishClubCATEGORIES,"All categories should be listed, with languageCategory listed last");
         Assertions.assertEquals("CATEGORIES:fr", weeklyMeetingCATEGORIES, "Language code expected in CATEGORIES string");
-    }
-
-    @Test
-    public void constructor_throws_exception_when_startDate_is_null() {
-        //ARRANGE
-
-        //ACT & ASSERT
-        try {
-            CalendarEvent nullEvent = new CalendarEvent(null,null,null,false,false,null,null,null);
-        } catch (IllegalArgumentException e) {
-            return;
-        }
-        Assertions.fail("startDate cannot be null");
-        //ASSERT
     }
 
     //helper methods
