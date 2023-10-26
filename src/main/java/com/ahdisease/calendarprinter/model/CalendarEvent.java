@@ -1,6 +1,5 @@
 package com.ahdisease.calendarprinter.model;
 
-import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -8,30 +7,34 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class CalendarEvent {
+
+
+
     /*
-    SUMMARY:Abraham Lincoln
-    UID:c7614cff-3549-4a00-9152-d25cc1fe077d
-    SEQUENCE:0
-    STATUS:CONFIRMED
-    TRANSP:TRANSPARENT
-    RRULE:FREQ=YEARLY;INTERVAL=1;BYMONTH=2;BYMONTHDAY=12
-    DTSTART:20080212
-    DTEND:20080213
-    DTSTAMP:20150421T141403
-    CATEGORIES:U.S. Presidents,Civil War People
-    LOCATION:Hodgenville\, Kentucky
-    GEO:37.5739497;-85.7399606
-    DESCRIPTION:Born February 12\, 1809\nSixteenth President (1861-1865)\n\n\n
-     \nhttp://AmericanHistoryCalendar.com
-    URL:http://americanhistorycalendar.com/peoplecalendar/1,328-abraham-lincol
- n
-     */
+            SUMMARY:Abraham Lincoln
+            UID:c7614cff-3549-4a00-9152-d25cc1fe077d
+            SEQUENCE:0
+            STATUS:CONFIRMED
+            TRANSP:TRANSPARENT
+            RRULE:FREQ=YEARLY;INTERVAL=1;BYMONTH=2;BYMONTHDAY=12
+            DTSTART:20080212
+            DTEND:20080213
+            DTSTAMP:20150421T141403
+            CATEGORIES:U.S. Presidents,Civil War People
+            LOCATION:Hodgenville\, Kentucky
+            GEO:37.5739497;-85.7399606
+            DESCRIPTION:Born February 12\, 1809\nSixteenth President (1861-1865)\n\n\n
+             \nhttp://AmericanHistoryCalendar.com
+            URL:http://americanhistorycalendar.com/peoplecalendar/1,328-abraham-lincol
+         n
+             */
     //enums
     private enum Status {TENTATIVE, CONFIRMED, CANCELLED}
 
-    ;
     //constants
-    private final String PATTERN_FORMAT = "yyyyMMdd'T'HHmmssz";
+    private final String DATE_PATTERN_FORMAT = "yyyyMMdd'T'HHmmssz";
+    public static final String LANGUAGE_PATTERN_FORMAT = "^[a-z]{2,3}(?:-[A-Z]{2,3}(?:-[a-zA-Z]{4})?)?$";
+
 
 
     //instance variables
@@ -41,6 +44,8 @@ public class CalendarEvent {
     private UUID uuid;
     // SEQUENCE property indicates the number of revisions to the event
     private int sequence = 0;
+    // STATUS property indicates whether the event is TENTATIVE, CONFIRMED, or CANCELLED
+    private Status status;
     // TRANSP property can be set to TRANSPARENT or OPAQUE
     //      TRANSPARENT - does not consume time on a calendar (e.g. a Holiday or an event from another calendar shared for reference only)
     //      OPAQUE - consumes time on a calendar, allowing the event to be detected by free-busy time searches (e.g. a confirmed meeting)
@@ -55,14 +60,20 @@ public class CalendarEvent {
     //  Only one language category can be included
     private Locale languageCategory;
     private String[] categories;
-    // STATUS property indicates whether the event is TENTATIVE, CONFIRMED, or CANCELLED
-    private Status status;
+    // LOCATION property is a string used to indicate specifics of where the event occurs.
+    //  An alternate representation of the location can be passed by use of the ALTREP property
+    //  This alternate representation is a URI
+    private String location;
 
 
-    //TODO instead of making lots of complex constructors, I should build one all-access constructor and a factory class
+
+    //TODO instead of making lots of complex constructors, I should build one all-access constructor and a factory class or set of static methods
     // so it's clear what kind of event is being created (e.g. Holiday, Optional Meeting, et cetra) but there's only one
     // constructor to test
-    public CalendarEvent(String summary, ZonedDateTime startDate, ZonedDateTime endDate, boolean tentativeEvent, boolean transparent, String languageCategory, String[] categories) {
+    public CalendarEvent(String summary, ZonedDateTime startDate, ZonedDateTime endDate, boolean tentativeEvent, boolean transparent, String languageCategory, String[] categories, String location) {
+        if (startDate == null) {
+            throw new IllegalArgumentException("Start date cannot be null.");
+        }
         uuid = UUID.randomUUID();
         this.summary = summary;
         this.startDate = startDate;
@@ -74,15 +85,16 @@ public class CalendarEvent {
             this.status = Status.CONFIRMED;
         }
         this.transparent = transparent;
-        if (languageCategory != null && languageCategory.matches("^[a-z]{2,3}(?:-[A-Z]{2,3}(?:-[a-zA-Z]{4})?)?$")) {
+        if (languageCategory != null && languageCategory.matches(LANGUAGE_PATTERN_FORMAT)) {
             // language tag format from
             this.languageCategory = Locale.forLanguageTag(languageCategory);
         }
         this.categories = categories;
+        this.location = location;
     }
 
     private String DateToUTCString(ZonedDateTime date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(PATTERN_FORMAT)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_PATTERN_FORMAT)
                 .withZone(ZoneId.of("Z"));
         return formatter.format(date);
     }
@@ -113,6 +125,7 @@ public class CalendarEvent {
         eventText.append("\nDTEND:" + DateToUTCString(endDate));
         eventText.append("\nDTSTAMP:" + DateToUTCString(createdDate));
         eventText.append(allCategoriesToString());
+        eventText.append("\nLOCATION:" + location);
 
 
 

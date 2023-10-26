@@ -43,7 +43,7 @@ This example represents all accepted base properties of an .ics file using the I
     - [X] DTEND - UTC Timestamp indicating when and event ends (exclusive)
     - [X] DTSTAMP - UTC Timestamp indicating when an event was created
     - [X] CATEGORIES - A comma delimited list of descriptive values for use in filtering and searching
-    - [ ] LOCATION
+    - [X] LOCATION
     - [ ] GEO
     - [ ] DESCRIPTION
     - [ ] URL

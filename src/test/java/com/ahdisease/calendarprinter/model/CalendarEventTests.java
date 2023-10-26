@@ -20,9 +20,9 @@ public class CalendarEventTests {
 
     @BeforeEach
     public void resetEvents() {
-        event1 = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,null,new String[]{"HOLIDAY","SEASON"});
-        event2 = new CalendarEvent("Spanish Club Meeting",OCTOBER_22_3PM,OCTOBER_22_3PM.plusHours(2),false,false, "es",new String[]{"EDUCATION", "BEGINNER"});
-        event3 = new CalendarEvent("Rencontre hebdomadaire", FIRST_WEEKLY_MEETING_TIME, FIRST_WEEKLY_MEETING_TIME.plusMinutes(30),true,false,"fr",null);
+        event1 = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,null,new String[]{"HOLIDAY","SEASON"},"N/A");
+        event2 = new CalendarEvent("Spanish Club Meeting",OCTOBER_22_3PM,OCTOBER_22_3PM.plusHours(2),false,false, "es",new String[]{"EDUCATION", "BEGINNER"},"Classroom 102");
+        event3 = new CalendarEvent("Rencontre hebdomadaire", FIRST_WEEKLY_MEETING_TIME, FIRST_WEEKLY_MEETING_TIME.plusMinutes(30),true,false,"fr",null, "Salle de réunion au 1er étage");
 
     }
 
@@ -46,7 +46,7 @@ public class CalendarEventTests {
     public void toString_returns_expected_value() {
         //ARRANGE
         // create expected calendar event string
-        String[] expectedICalendarLines1 = new String[] {
+        String[] expectedToStringLinesEvent1 = new String[] {
                 "BEGIN:VEVENT",
                 "SUMMARY:Spring Begins",
                 "UID:",
@@ -57,6 +57,7 @@ public class CalendarEventTests {
                 "DTEND:20230322T050000Z",
                 "DTSTAMP",
                 "CATEGORIES:HOLIDAY,SEASON",
+                "LOCATION:N/A",
                 "END:VEVENT"
         };
 
@@ -72,7 +73,7 @@ public class CalendarEventTests {
         String[] iCalendarLines = iCalendarString.split("\n");
 
         //ASSERT
-        Assertions.assertEquals(expectedICalendarLines1.length, iCalendarLines.length, "New CalendarEvent object should have expected number of string lines: " + expectedICalendarLines1.length);
+        Assertions.assertEquals(expectedToStringLinesEvent1.length, iCalendarLines.length, "New CalendarEvent object should have expected number of string lines: " + expectedToStringLinesEvent1.length);
 
         for (int i = 0; i < iCalendarLines.length; i++) {
             if(iCalendarLines[i].startsWith("UID")) {
@@ -86,7 +87,7 @@ public class CalendarEventTests {
                 continue;
             }
 
-            Assertions.assertEquals(expectedICalendarLines1[i],iCalendarLines[i],"Expected line of String to match: " + i);
+            Assertions.assertEquals(expectedToStringLinesEvent1[i],iCalendarLines[i],"Expected line of String to match: " + i);
         }
     }
 
@@ -94,7 +95,7 @@ public class CalendarEventTests {
     public void confirmEvent_changes_status_to_confirmed() {
         //ARRANGE
         // create calendar event
-        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),true, true, null, null);
+        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),true, true, null, null,null);
         String[] eventString = tentativeEvent.toString().split("\n");
 
         // find index of STATUS property
@@ -118,7 +119,7 @@ public class CalendarEventTests {
     public void cancelEvent_changes_status_to_cancelled() {
         //ARRANGE
         // create calendar event
-        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),true,true, null, null);
+        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),true,true, null, null,null);
         String[] eventString = tentativeEvent.toString().split("\n");
 
         // find index of STATUS property
@@ -142,9 +143,9 @@ public class CalendarEventTests {
     @Test
     public void allCategoriesToString_returns_empty_string_if_language_and_category_array_are_invalid() {
         //ARRANGE
-        CalendarEvent nullCategoriesEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,null,null);
-        CalendarEvent blankLanguageEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,"",null);
-        CalendarEvent emptyArrayEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,null,new String[]{});
+        CalendarEvent nullCategoriesEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,null,null,null);
+        CalendarEvent blankLanguageEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,"",null,null);
+        CalendarEvent emptyArrayEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,null,new String[]{},null);
         
         //ACT
         int nullCategoriesPropertyIndex = getPropertyLineIndexFromToString(nullCategoriesEvent,"CATEGORIES");
@@ -176,8 +177,21 @@ public class CalendarEventTests {
         Assertions.assertEquals("CATEGORIES:fr", weeklyMeetingCATEGORIES, "Language code expected in CATEGORIES string");
     }
 
+    @Test
+    public void constructor_throws_exception_when_startDate_is_null() {
+        //ARRANGE
 
+        //ACT & ASSERT
+        try {
+            CalendarEvent nullEvent = new CalendarEvent(null,null,null,false,false,null,null,null);
+        } catch (IllegalArgumentException e) {
+            return;
+        }
+        Assertions.fail("startDate cannot be null");
+        //ASSERT
+    }
 
+    //helper methods
     private int getPropertyLineIndexFromToString(CalendarEvent event, String propertyName) {
         String[] eventStrings = event.toString().split("\n");
 
@@ -197,5 +211,6 @@ public class CalendarEventTests {
         }
         return -1;
     }
+
 
 }
