@@ -43,7 +43,7 @@ This example represents all accepted base properties of an .ics file using the I
     - [X] DTEND - UTC Timestamp indicating when and event ends (exclusive)
     - [X] DTSTAMP - UTC Timestamp indicating when an event was created
     - [X] CATEGORIES - A comma delimited list of descriptive values for use in filtering and searching
-    - [X] LOCATION
+    - [X] LOCATION - A string description of a location. If the ALTREP property is used, a URI can be supplied to provide a more structured specification.
     - [ ] GEO
     - [ ] DESCRIPTION
     - [ ] URL
@@ -53,5 +53,5 @@ This example represents all accepted base properties of an .ics file using the I
     - [ ] PRODID
     - [ ] CALSCALE
     - [ ] METHOD
-- [ ] Create CalendarEventFactory class
+- [ ] Create CalendarEventFactory class? Alternately, create static methods that generate CalendarEvents by template.
 - [ ] Create UI to Generate Calendar Events
