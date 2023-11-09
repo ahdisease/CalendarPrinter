@@ -1,24 +1,9 @@
 package com.ahdisease.calendarprinter.model;
 
-public class GeoCoordinate {
-    private final double latitude;
-    private final double longitude;
-
-    public GeoCoordinate(double latitude, double longitude) {
-        this.latitude = latitude;
-        this.longitude = longitude;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
+public record GeoCoordinate(double latitude, double longitude) {
 
     @Override
     public String toString() {
-        return String.format( "%.6f;%.6f",latitude,longitude);
+        return String.format("%.6f;%.6f", latitude, longitude);
     }
 }
