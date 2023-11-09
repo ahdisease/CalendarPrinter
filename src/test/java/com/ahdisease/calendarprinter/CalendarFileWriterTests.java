@@ -27,8 +27,8 @@ public class CalendarFileWriterTests {
             ZonedDateTime eventOneDate = ZonedDateTime.of(2023, 03, 21, 0, 0, 0, 0, ZoneId.of("EST", ZoneId.SHORT_IDS));
             ZonedDateTime eventTwoDate = ZonedDateTime.of(2023, 10, 15, 0, 0, 0, 0, ZoneId.of("EST", ZoneId.SHORT_IDS));
 
-            eventOne = new CalendarEvent("Spring Begins", eventOneDate,eventOneDate.plusDays(1),false,false,null,null,null);
-            eventTwo = new CalendarEvent("Tests first written", eventTwoDate,eventTwoDate.plusDays(1),false,false,null,null, null);
+            eventOne = new CalendarEvent("Spring Begins", eventOneDate,eventOneDate.plusDays(1),false,false,null,null,null,null);
+            eventTwo = new CalendarEvent("Tests first written", eventTwoDate,eventTwoDate.plusDays(1),false,false,null,null, null,null);
         }
     }
 

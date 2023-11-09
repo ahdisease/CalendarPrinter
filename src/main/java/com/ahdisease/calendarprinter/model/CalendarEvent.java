@@ -64,13 +64,16 @@ public class CalendarEvent {
     //  An alternate representation of the location can be passed by use of the ALTREP property
     //  This alternate representation is a URI
     private String location;
+    // GEO property consists of two decimal numbers, latitude and longitude
+    //  Numbers are separated with a semicolon and have at least 6 digits of precision
+    private GeoCoordinate coordinates;
 
 
 
     //TODO instead of making lots of complex constructors, I should build one all-access constructor and a factory class or set of static methods
     // so it's clear what kind of event is being created (e.g. Holiday, Optional Meeting, et cetra) but there's only one
     // constructor to test
-    public CalendarEvent(String summary, ZonedDateTime startDate, ZonedDateTime endDate, boolean tentativeEvent, boolean transparent, String languageCategory, String[] categories, String location) {
+    public CalendarEvent(String summary, ZonedDateTime startDate, ZonedDateTime endDate, boolean tentativeEvent, boolean transparent, String languageCategory, String[] categories, String location, GeoCoordinate coordinates) {
         if (startDate == null) {
             throw new IllegalArgumentException("Start date cannot be null.");
         }
@@ -91,6 +94,7 @@ public class CalendarEvent {
         }
         this.categories = categories;
         this.location = location;
+        this.coordinates = coordinates;
     }
 
     private String DateToUTCString(ZonedDateTime date) {
@@ -131,6 +135,9 @@ public class CalendarEvent {
         eventText.append(allCategoriesToString());
         if (location != null) {
             eventText.append("\nLOCATION:" + location);
+        }
+        if (coordinates != null) {
+            eventText.append("\nGEO:" + coordinates);
         }
 
 
