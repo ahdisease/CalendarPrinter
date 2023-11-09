@@ -67,13 +67,14 @@ public class CalendarEvent {
     // GEO property consists of two decimal numbers, latitude and longitude
     //  Numbers are separated with a semicolon and have at least 6 digits of precision
     private GeoCoordinate coordinates;
+    private String description;
 
 
 
     //TODO instead of making lots of complex constructors, I should build one all-access constructor and a factory class or set of static methods
     // so it's clear what kind of event is being created (e.g. Holiday, Optional Meeting, et cetra) but there's only one
     // constructor to test
-    public CalendarEvent(String summary, ZonedDateTime startDate, ZonedDateTime endDate, boolean tentativeEvent, boolean transparent, String languageCategory, String[] categories, String location, GeoCoordinate coordinates) {
+    public CalendarEvent(String summary, ZonedDateTime startDate, ZonedDateTime endDate, boolean tentativeEvent, boolean transparent, String languageCategory, String[] categories, String location, GeoCoordinate coordinates, String description) {
         if (startDate == null) {
             throw new IllegalArgumentException("Start date cannot be null.");
         }
@@ -95,6 +96,7 @@ public class CalendarEvent {
         this.categories = categories;
         this.location = location;
         this.coordinates = coordinates;
+        this.description = description;
     }
 
     private String DateToUTCString(ZonedDateTime date) {
@@ -138,6 +140,9 @@ public class CalendarEvent {
         }
         if (coordinates != null) {
             eventText.append("\nGEO:" + coordinates);
+        }
+        if (description != null) {
+            eventText.append("\nDESCRIPTION:" + description.replace("\n","\\n"));
         }
 
 

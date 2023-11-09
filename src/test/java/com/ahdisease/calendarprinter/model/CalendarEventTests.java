@@ -19,12 +19,15 @@ public class CalendarEventTests {
     private CalendarEvent event3;
     private GeoCoordinate A_CHRISTMAS_STORY_HOUSE = new GeoCoordinate(41.46872864522275, -81.68759660569253);
     private GeoCoordinate NEW_YORK_PUBLIC_LIBRARY = new GeoCoordinate(40.75330093831545, -73.98227692748908);
+    private String SPRING_DESCRIPTION = "The first day of Spring.\n\nFirst Discovered in March of 2023, Spring is a season known for its hesitant nature and wet dandruff known as 'snow'.";
+    private String SPANISH_CLUB_DESCRIPTION = "Mrs. Parker has graciously volunteered to host Spanish Club this month. Please remember to bring your assigned dish.";
+    private String FRENCH_CLUB_DESCRIPTION = "Une fois, j'ai vu Winnie l'ourson et ses amis à la bibliothèque publique de New York. En tant que grand fan, c’était un honneur.";
 
     @BeforeEach
     public void resetEvents() {
-        event1 = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,null,new String[]{"HOLIDAY","SEASON"},"N/A",A_CHRISTMAS_STORY_HOUSE);
-        event2 = new CalendarEvent("Spanish Club Meeting",OCTOBER_22_3PM,OCTOBER_22_3PM.plusHours(2),false,false, "es",new String[]{"EDUCATION", "BEGINNER"},"Classroom 102", A_CHRISTMAS_STORY_HOUSE);
-        event3 = new CalendarEvent("Rencontre hebdomadaire", FIRST_WEEKLY_MEETING_TIME, FIRST_WEEKLY_MEETING_TIME.plusMinutes(30),true,false,"fr",null, "Salle de réunion au 1er étage", NEW_YORK_PUBLIC_LIBRARY);
+        event1 = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,null,new String[]{"HOLIDAY","SEASON"},"N/A",A_CHRISTMAS_STORY_HOUSE, SPRING_DESCRIPTION);
+        event2 = new CalendarEvent("Spanish Club Meeting",OCTOBER_22_3PM,OCTOBER_22_3PM.plusHours(2),false,false, "es",new String[]{"EDUCATION", "BEGINNER"},"Classroom 102", A_CHRISTMAS_STORY_HOUSE, SPANISH_CLUB_DESCRIPTION);
+        event3 = new CalendarEvent("Rencontre hebdomadaire", FIRST_WEEKLY_MEETING_TIME, FIRST_WEEKLY_MEETING_TIME.plusMinutes(30),true,false,"fr",null, "Salle de réunion au 1er étage", NEW_YORK_PUBLIC_LIBRARY, FRENCH_CLUB_DESCRIPTION);
 
     }
 
@@ -50,7 +53,7 @@ public class CalendarEventTests {
 
         //ACT & ASSERT
         try {
-            CalendarEvent nullEvent = new CalendarEvent(null,null,null,false,false,null,null,null,null);
+            CalendarEvent nullEvent = new CalendarEvent(null,null,null,false,false,null,null,null,null, null);
         } catch (IllegalArgumentException e) {
             return;
         }
@@ -74,6 +77,7 @@ public class CalendarEventTests {
                 "CATEGORIES:HOLIDAY,SEASON",
                 "LOCATION:N/A",
                 "GEO:41.468729;-81.687597",
+                "DESCRIPTION:" + SPRING_DESCRIPTION.replace("\n","\\n"),
                 "END:VEVENT"
         };
 
@@ -121,7 +125,7 @@ public class CalendarEventTests {
         };
 
         // create calendar event
-        CalendarEvent firstDayOfSpring = new CalendarEvent(null,FIRST_DAY_OF_SPRING_DATE,null,false,false,null,null,null,null);
+        CalendarEvent firstDayOfSpring = new CalendarEvent(null,FIRST_DAY_OF_SPRING_DATE,null,false,false,null,null,null,null, null);
 
         //ACT
         String[] iCalendarLines = firstDayOfSpring.toString().split("\n");
@@ -148,7 +152,7 @@ public class CalendarEventTests {
     public void confirmEvent_changes_status_to_confirmed() {
         //ARRANGE
         // create calendar event
-        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),true, true, null, null,null,null);
+        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),true, true, null, null,null,null, null);
         String[] eventString = tentativeEvent.toString().split("\n");
 
         // find index of STATUS property
@@ -172,7 +176,7 @@ public class CalendarEventTests {
     public void cancelEvent_changes_status_to_cancelled() {
         //ARRANGE
         // create calendar event
-        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),true,true, null, null,null,null);
+        CalendarEvent tentativeEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),true,true, null, null,null,null, null);
         String[] eventString = tentativeEvent.toString().split("\n");
 
         // find index of STATUS property
@@ -196,9 +200,9 @@ public class CalendarEventTests {
     @Test
     public void allCategoriesToString_returns_empty_string_if_language_and_category_array_are_invalid() {
         //ARRANGE
-        CalendarEvent nullCategoriesEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,null,null,null,null);
-        CalendarEvent blankLanguageEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,"",null,null,null);
-        CalendarEvent emptyArrayEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,null,new String[]{},null,null);
+        CalendarEvent nullCategoriesEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,null,null,null,null, null);
+        CalendarEvent blankLanguageEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,"",null,null,null, null);
+        CalendarEvent emptyArrayEvent = new CalendarEvent("Spring Begins",FIRST_DAY_OF_SPRING_DATE,FIRST_DAY_OF_SPRING_DATE.plusDays(1),false,true,null,new String[]{},null,null, null);
         
         //ACT
         int nullCategoriesPropertyIndex = getPropertyLineIndexFromToString(nullCategoriesEvent,"CATEGORIES");
